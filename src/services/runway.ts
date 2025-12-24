@@ -7,7 +7,7 @@ const RUNWAY_API_KEY = process.env.RUNWAY_API_KEY;
 // Note: Runway Gen-3 Alpha Turbo endpoint might differ; using standard structure for now.
 // Actual endpoint usually requires checking specific docs or assume standard '/v1/image_to_video' or similar command.
 // For Gen-3 Alpha Turbo, it's often text-to-video.
-const RUNWAY_ENDPOINT = 'https://api.runwayml.com/v1/generations';
+const RUNWAY_ENDPOINT = 'https://api.dev.runwayml.com/v1/generations';
 
 export const generateVideoAsset = async (prompt: string): Promise<string | null> => {
     if (!RUNWAY_API_KEY) {
