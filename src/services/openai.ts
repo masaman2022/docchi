@@ -52,7 +52,7 @@ export const generateIdeas = async (count: number = 10): Promise<Idea[]> => {
 
     } catch (error) {
         console.error('Error generating ideas:', error);
-        return [];
+        throw error;
     }
 };
 
@@ -71,7 +71,7 @@ export const generateAndSaveIdeas = async () => {
 
     if (error) {
         console.error('Error saving ideas to Supabase:', error);
-        return [];
+        throw new Error(`Supabase Error: ${error.message}`);
     } else {
         console.log(`Saved ${data?.length} ideas to Supabase.`);
         return data;

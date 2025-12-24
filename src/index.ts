@@ -1,12 +1,24 @@
 import { App } from '@slack/bolt';
 import dotenv from 'dotenv';
+import { createServer } from 'http'; // For Render health checks
+
 import { generateAndSaveIdeas } from './services/openai';
+import { supabase } from './supabase';
+import { buildIdeaBlocks } from './services/ui';
+import { runVideoGenerationPipeline } from './services/pipeline';
 
 dotenv.config();
 
-import { buildIdeaBlocks } from './services/ui';
-import { supabase } from './supabase';
-import { runVideoGenerationPipeline } from './services/pipeline';
+// --- Health Check Server for Render.com ---
+const server = createServer((req, res) => {
+    res.writeHead(200);
+    res.end('Health check OK');
+});
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+    console.log(`Health check server listening on port ${port}`);
+});
+// ------------------------------------------
 
 const app = new App({
     token: process.env.SLACK_BOT_TOKEN,
@@ -14,23 +26,36 @@ const app = new App({
     socketMode: true,
 });
 
-// Command to manually trigger idea generation
-app.command('/docchi_gen', async ({ ack, respond }) => {
+app.command('/docchi_gen', async ({ command, ack, client }) => {
     await ack();
-    await respond('アイデア生成中... 🧠 (30秒ほどかかります)');
+
+    await client.chat.postMessage({
+        channel: command.channel_id,
+        text: 'アイデア生成中... 🧠 (30秒ほどかかります)',
+    });
 
     try {
         const ideas = await generateAndSaveIdeas();
+
         if (!ideas || ideas.length === 0) {
-            await respond('アイデア生成に失敗しました 😢');
-            return;
+            // Note: If generateAndSaveIdeas returns [], it usually means an error occurred but was caught.
+            // Check logs or modify service to throw.
+            throw new Error('アイデアが0件でした。OpenAIまたはSupabaseの接続を確認してください。');
         }
 
         const blocks = buildIdeaBlocks(ideas);
-        await respond({ blocks, text: '新しいアイデアが届きました' });
-    } catch (e) {
-        console.error(e);
-        await respond('エラーが発生しました 💥');
+
+        await client.chat.postMessage({
+            channel: command.channel_id,
+            text: '究極の2択のアイデアが生成されました！',
+            blocks: blocks,
+        });
+    } catch (error: any) {
+        console.error(error);
+        await client.chat.postMessage({
+            channel: command.channel_id,
+            text: `⚠️ エラーが発生しました:\n\`\`\`${error.message}\`\`\``,
+        });
     }
 });
 
