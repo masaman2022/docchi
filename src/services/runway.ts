@@ -43,8 +43,13 @@ export const generateVideoAsset = async (prompt: string): Promise<string | null>
         // 2. Poll for completion
         return await pollRunwayTask(taskId);
 
-    } catch (error) {
-        console.error('Runway API Error:', error);
+    } catch (error: any) {
+        if (error.response) {
+            console.error('Runway API Error Status:', error.response.status);
+            console.error('Runway API Error Data:', JSON.stringify(error.response.data, null, 2));
+        } else {
+            console.error('Runway API Error:', error.message);
+        }
         return null;
     }
 };
