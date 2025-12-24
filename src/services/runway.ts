@@ -7,7 +7,8 @@ const RUNWAY_API_KEY = process.env.RUNWAY_API_KEY;
 // Note: Runway Gen-3 Alpha Turbo endpoint might differ; using standard structure for now.
 // Actual endpoint usually requires checking specific docs or assume standard '/v1/image_to_video' or similar command.
 // For Gen-3 Alpha Turbo, it's often text-to-video.
-const RUNWAY_ENDPOINT = 'https://api.dev.runwayml.com/v1/generations';
+// Based on user screenshot: POST /v1/text_to_video
+const RUNWAY_ENDPOINT = 'https://api.dev.runwayml.com/v1/text_to_video';
 
 export const generateVideoAsset = async (prompt: string): Promise<string | null> => {
     if (!RUNWAY_API_KEY) {
@@ -16,7 +17,6 @@ export const generateVideoAsset = async (prompt: string): Promise<string | null>
     }
 
     // Optimized prompt for "Ultimate 2-Choice" background
-    // We want a subtle, high-quality background that doesn't distract from text.
     const fullPrompt = `Cinematic, slow motion, abstract background, ${prompt}, 4k, high quality, minimal distraction`;
 
     try {
@@ -25,14 +25,15 @@ export const generateVideoAsset = async (prompt: string): Promise<string | null>
             RUNWAY_ENDPOINT,
             {
                 promptText: fullPrompt,
-                model: 'gen-3-alpha-turbo',
-                ratio: '16:9',
+                model: 'veo3.1', // Updated from gen-3-alpha-turbo based on screenshot
+                ratio: '1280:720', // Screenshot shows pixel dimensions
+                duration: 5, // Short duration for background
             },
             {
                 headers: {
                     'Authorization': `Bearer ${RUNWAY_API_KEY}`,
                     'Content-Type': 'application/json',
-                    'X-Runway-Version': '2024-09-13', // Check for latest version
+                    'X-Runway-Version': '2024-11-06', // Updated from screenshot
                 },
             }
         );
