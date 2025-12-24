@@ -28,9 +28,9 @@ export const generateVideoAsset = async (prompt: string): Promise<string | null>
             RUNWAY_ENDPOINT,
             {
                 promptText: fullPrompt,
-                model: 'veo3.1', // Updated from gen-3-alpha-turbo based on screenshot
+                model: 'gen-3-alpha-turbo', // Switch to Turbo for cost savings (5 credits/sec vs 20)
                 ratio: '720:1280', // Vertical (9:16) for Reels/Shorts
-                duration: 4,
+                duration: 5, // Turbo supports 5s or 10s. 5s = 25 credits.
                 audio: false,
             },
             {
