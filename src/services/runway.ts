@@ -24,9 +24,9 @@ export const generateVideoAsset = async (prompt: string): Promise<string | null>
         const response = await axios.post(
             RUNWAY_ENDPOINT,
             {
-                text_prompt: fullPrompt,
+                promptText: fullPrompt,
                 model: 'gen-3-alpha-turbo',
-                seconds: 10, // 2-choice videos are short
+                ratio: '16:9',
             },
             {
                 headers: {
