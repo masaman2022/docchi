@@ -29,7 +29,7 @@ export const generateVideoAsset = async (prompt: string): Promise<string | null>
             {
                 promptText: fullPrompt,
                 model: 'veo3.1', // Updated from gen-3-alpha-turbo based on screenshot
-                ratio: '1280:720', // Screenshot shows pixel dimensions
+                ratio: '720:1280', // Vertical (9:16) for Reels/Shorts
                 duration: 4,
                 audio: false,
             },
