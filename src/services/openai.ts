@@ -35,7 +35,16 @@ export const generateIdeas = async (count: number = 10): Promise<Idea[]> => {
     try {
         const response = await openai.chat.completions.create({
             model: 'gpt-4-turbo-preview',
-            messages: [{ role: 'system', content: prompt }],
+            messages: [
+                {
+                    role: 'system',
+                    content: 'You are a creative video planner. You must output a valid JSON object with the key "ideas" containing an array of ideas. The user will provide the specific format and topic.'
+                },
+                {
+                    role: 'user',
+                    content: prompt
+                }
+            ],
             response_format: { type: 'json_object' },
         });
 
