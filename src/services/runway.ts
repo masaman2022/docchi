@@ -16,8 +16,8 @@ export const generateVideoAsset = async (prompt: string): Promise<string | null>
         return null;
     }
 
-    // Optimized prompt for "Ultimate 2-Choice" background
-    const fullPrompt = `Cinematic, slow motion, abstract background, ${prompt}, 4k, high quality, minimal distraction`;
+    // Use the prompt directly as it is now fully styled by OpenAI
+    const fullPrompt = prompt;
 
     console.log(`Using Runway Endpoint: ${RUNWAY_ENDPOINT}`);
     console.log(`Runway Config: Model=veo3.1, Duration=4, Ratio=1280:720, Audio=false`);
