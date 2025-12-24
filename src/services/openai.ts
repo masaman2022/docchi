@@ -52,10 +52,13 @@ export const generateIdeas = async (count: number = 10): Promise<Idea[]> => {
         if (!validChoice?.message?.content) throw new Error('No content from OpenAI');
 
         const content = validChoice.message.content;
+        console.log('OpenAI Response Content:', content); // DEBUG LOG
 
         const result = JSON.parse(content);
         // Handle cases where GPT wraps it in a key like { "ideas": [...] }
         const ideas: Idea[] = Array.isArray(result) ? result : result.ideas || result.data || [];
+
+        console.log(`Parsed ${ideas.length} ideas from content.`); // DEBUG LOG
 
         return ideas;
 
@@ -71,7 +74,10 @@ export const generateIdeas = async (count: number = 10): Promise<Idea[]> => {
 export const generateAndSaveIdeas = async () => {
     const ideas = await generateIdeas(10);
 
-    if (ideas.length === 0) return [];
+    if (ideas.length === 0) {
+        console.error('generateIdeas returned 0 items.');
+        throw new Error('OpenAI returned 0 valid ideas (Parsing failed?). Check logs.');
+    }
 
     const { data, error } = await supabase
         .from('ideas')
