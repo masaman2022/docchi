@@ -57,13 +57,13 @@ export const runVideoGenerationPipeline = async (ideaId: string, slackClient: Ap
         // 4. Render Final Video via Creatomate
         const templateId = process.env.CREATOMATE_TEMPLATE_ID;
 
-        let finalVideoUrl = '';
+        let finalVideoUrl: string | null = '';
 
         if (!templateId) {
             console.warn('CREATOMATE_TEMPLATE_ID missing. Skipping final render.');
             // Save raw assets instead for debugging/viewing
             // We'll just save Video A for now as the "main" video to allow the flow to complete
-            finalVideoUrl = videoUrlA;
+            finalVideoUrl = videoUrlA!;
 
             if (channelId) {
                 await slackClient.chat.postMessage({
@@ -78,8 +78,8 @@ export const runVideoGenerationPipeline = async (ideaId: string, slackClient: Ap
                     'Title': idea.title,
                     'TextA': idea.option_a,
                     'TextB': idea.option_b,
-                    'VideoA': videoUrlA,
-                    'VideoB': videoUrlB,
+                    'VideoA': videoUrlA!,
+                    'VideoB': videoUrlB!,
                 },
             });
 
@@ -107,32 +107,35 @@ export const runVideoGenerationPipeline = async (ideaId: string, slackClient: Ap
                 ? `✨ 動画が完成しました！\n${finalVideoUrl}`
                 : `✨ 素材の生成が完了しました！(結合はスキップ)`;
 
+            const blocks: any[] = [
+                {
+                    type: 'section',
+                    text: {
+                        type: 'mrkdwn',
+                        text: `✨ *完了しました！*\n<${finalVideoUrl}|視聴する>`,
+                    },
+                }
+            ];
+
+            if (templateId) {
+                blocks.push({
+                    type: 'actions',
+                    elements: [
+                        {
+                            type: 'button',
+                            text: { type: 'plain_text', text: '投稿予約へ進む (Post)', emoji: true },
+                            style: 'primary',
+                            action_id: 'start_posting_flow',
+                            value: videoRecord?.id || finalVideoUrl
+                        }
+                    ]
+                });
+            }
+
             await slackClient.chat.postMessage({
                 channel: channelId,
                 text: completionText,
-                blocks: [
-                    {
-                        type: 'section',
-                        text: {
-                            type: 'mrkdwn',
-                            text: `✨ *完了しました！*\n<${finalVideoUrl}|視聴する>`,
-                        },
-                    },
-                    // "Post Now" button is hidden if only raw assets are available, 
-                    // or we can leave it to test the flow (it will fail at Publer step likely)
-                    ...(templateId ? [{
-                        type: 'actions',
-                        elements: [
-                            {
-                                type: 'button',
-                                text: { type: 'plain_text', text: '投稿予約へ進む (Post)', emoji: true },
-                                style: 'primary',
-                                action_id: 'start_posting_flow',
-                                value: videoRecord?.id || finalVideoUrl
-                            }
-                        ]
-                    }] : []) // Hide Post button if no final render
-                ]
+                blocks: blocks
             });
         }
 
