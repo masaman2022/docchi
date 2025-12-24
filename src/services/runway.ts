@@ -19,6 +19,8 @@ export const generateVideoAsset = async (prompt: string): Promise<string | null>
     // Optimized prompt for "Ultimate 2-Choice" background
     const fullPrompt = `Cinematic, slow motion, abstract background, ${prompt}, 4k, high quality, minimal distraction`;
 
+    console.log(`Using Runway Endpoint: ${RUNWAY_ENDPOINT}`);
+
     try {
         // 1. Initiate Generation
         const response = await axios.post(
@@ -64,7 +66,7 @@ const pollRunwayTask = async (taskId: string): Promise<string | null> => {
             const response = await axios.get(`${RUNWAY_ENDPOINT}/${taskId}`, {
                 headers: {
                     'Authorization': `Bearer ${RUNWAY_API_KEY}`,
-                    'X-Runway-Version': '2024-09-13',
+                    'X-Runway-Version': '2024-11-06',
                 },
             });
 
