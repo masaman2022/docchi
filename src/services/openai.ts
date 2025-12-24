@@ -94,27 +94,28 @@ export const generateAndSaveIdeas = async () => {
 };
 
 export const createVisualPrompts = async (idea: Idea): Promise<{ promptA: string; promptB: string }> => {
-    以下の「究極の2択」の選択肢を、動画生成AI(Runway) に入力するための「英語の映像プロンプト」に変換してください。
+    const prompt = `
+    以下の「究極の2択」の選択肢を、動画生成AI (Runway) に入力するための「英語の映像プロンプト」に変換してください。
   
-  【企画】
-タイトル: ${ idea.title }
-選択肢A: ${ idea.option_a }
-選択肢B: ${ idea.option_b }
-  
-  【条件】
-- 英語で出力
+    【企画】
+    タイトル: ${idea.title}
+    選択肢A: ${idea.option_a}
+    選択肢B: ${idea.option_b}
+    
+    【条件】
+    - 英語で出力
     - 各選択肢の「具体的な状況」や「感情」を反映した、対照的な映像にする
-        - テキストを上に乗せるため、ごちゃごちゃしすぎない「Cinematic background」にする
-            - 人物はメインにせず、あくまで雰囲気やオブジェクト（手元、景色、抽象表現など）で表現する
-                - 開始フレーズ: "Cinematic, slow motion, high quality, 4k..."
-                    - AならAの、BならBの特徴をはっきりと描き分けること
-                        - JSONで { "promptA": "...", "promptB": "..." } の形式で返す
-  
-  【例】
-題: スマホは常に最新？
-A(最新): "Cinematic, slow motion, high quality, 4k, futuristic sleek smartphone close-up, glowing interface, cutting edge technology atmosphere, clean and modern"
-B(壊れるまで): "Cinematic, slow motion, high quality, 4k, rugged vintage phone texture, weathered materials, endurance and durability concept, warm lighting"
-  `;
+    - テキストを上に乗せるため、ごちゃごちゃしすぎない「Cinematic background」にする
+    - 人物はメインにせず、あくまで雰囲気やオブジェクト（手元、景色、抽象表現など）で表現する
+    - 開始フレーズ: "Cinematic, slow motion, high quality, 4k..."
+    - AならAの、BならBの特徴をはっきりと描き分けること
+    - JSONで { "promptA": "...", "promptB": "..." } の形式で返す
+    
+    【例】
+    題: スマホは常に最新？
+    A(最新): "Cinematic, slow motion, high quality, 4k, futuristic sleek smartphone close-up, glowing interface, cutting edge technology atmosphere, clean and modern"
+    B(壊れるまで): "Cinematic, slow motion, high quality, 4k, rugged vintage phone texture, weathered materials, endurance and durability concept, warm lighting"
+    `;
 
     try {
         const response = await openai.chat.completions.create({
@@ -129,14 +130,14 @@ B(壊れるまで): "Cinematic, slow motion, high quality, 4k, rugged vintage ph
         const content = validChoice.message.content;
         const result = JSON.parse(content);
         return {
-            promptA: result.promptA || `Cinematic abstract background representing ${ idea.option_a } `,
-            promptB: result.promptB || `Cinematic abstract background representing ${ idea.option_b } `,
+            promptA: result.promptA || `Cinematic abstract background representing ${idea.option_a} `,
+            promptB: result.promptB || `Cinematic abstract background representing ${idea.option_b} `,
         };
     } catch (error) {
         console.error('Error creating visual prompts:', error);
         return {
-            promptA: `Cinematic abstract background representing ${ idea.option_a } `,
-            promptB: `Cinematic abstract background representing ${ idea.option_b } `
+            promptA: `Cinematic abstract background representing ${idea.option_a} `,
+            promptB: `Cinematic abstract background representing ${idea.option_b} `
         };
     }
 };
