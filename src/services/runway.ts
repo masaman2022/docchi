@@ -20,7 +20,8 @@ export const generateVideoAsset = async (prompt: string): Promise<string | null>
     const fullPrompt = prompt;
 
     console.log(`Using Runway Endpoint: ${RUNWAY_ENDPOINT}`);
-    console.log(`Runway Config: Model=veo3.1, Duration=4, Ratio=1280:720, Audio=false`);
+    console.log(`Using Runway Endpoint: ${RUNWAY_ENDPOINT}`);
+    console.log(`Runway Config: Model=veo3.1_fast, Duration=4, Ratio=720:1280, Audio=false`);
 
     try {
         // 1. Initiate Generation
@@ -28,9 +29,9 @@ export const generateVideoAsset = async (prompt: string): Promise<string | null>
             RUNWAY_ENDPOINT,
             {
                 promptText: fullPrompt,
-                model: 'gen3a_turbo', // Corrected from error log (was gen-3-alpha-turbo)
-                ratio: '720:1280', // Vertical (9:16) for Reels/Shorts
-                duration: 5, // Turbo supports 5s or 10s. 5s = 25 credits.
+                model: 'veo3.1_fast', // Fallback to Veo Fast (40 credits) as Turbo (25 credits) returned 403
+                ratio: '720:1280',
+                duration: 4, // Veo models stick to 4
                 audio: false,
             },
             {
