@@ -60,9 +60,10 @@ export const generateVideoAsset = async (prompt: string): Promise<string | null>
 };
 
 const pollRunwayTask = async (taskId: string): Promise<string | null> => {
-    const maxAttempts = 60; // 1 min (if checking every 1s)
+    const maxAttempts = 150; // 5 mins (checking every 2s)
     for (let i = 0; i < maxAttempts; i++) {
         await new Promise(r => setTimeout(r, 2000)); // Wait 2s
+        console.log(`Polling Runway Task: ${taskId} (Attempt ${i + 1}/${maxAttempts})`);
 
         try {
             // Poll standard /tasks endpoint for status
