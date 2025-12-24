@@ -65,7 +65,8 @@ const pollRunwayTask = async (taskId: string): Promise<string | null> => {
         await new Promise(r => setTimeout(r, 2000)); // Wait 2s
 
         try {
-            const response = await axios.get(`${RUNWAY_ENDPOINT}/${taskId}`, {
+            // Poll standard /tasks endpoint for status
+            const response = await axios.get(`https://api.dev.runwayml.com/v1/tasks/${taskId}`, {
                 headers: {
                     'Authorization': `Bearer ${RUNWAY_API_KEY}`,
                     'X-Runway-Version': '2024-11-06',
