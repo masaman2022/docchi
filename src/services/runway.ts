@@ -20,6 +20,7 @@ export const generateVideoAsset = async (prompt: string): Promise<string | null>
     const fullPrompt = `Cinematic, slow motion, abstract background, ${prompt}, 4k, high quality, minimal distraction`;
 
     console.log(`Using Runway Endpoint: ${RUNWAY_ENDPOINT}`);
+    console.log(`Runway Config: Model=veo3.1, Duration=4, Ratio=1280:720, Audio=false`);
 
     try {
         // 1. Initiate Generation
