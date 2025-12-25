@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const CREATOMATE_API_KEY = process.env.CREATOMATE_API_KEY;
-const CREATOMATE_ENDPOINT = 'https://api.creatomate.com/v1/renders';
+const CREATOMATE_ENDPOINT = 'https://api.creatomate.com/v2/renders';
 
 export interface RenderOptions {
     templateId: string;
