@@ -55,9 +55,10 @@ export const renderVideo = async (options: RenderOptions): Promise<string | null
 };
 
 const pollCreatomateRender = async (renderId: string): Promise<string | null> => {
-    const maxAttempts = 30;
+    const maxAttempts = 90; // 3 mins (checking every 2s)
     for (let i = 0; i < maxAttempts; i++) {
         await new Promise(r => setTimeout(r, 2000));
+        console.log(`Polling Creatomate Render: ${renderId} (Attempt ${i + 1}/${maxAttempts})`);
 
         try {
             const response = await axios.get(`${CREATOMATE_ENDPOINT}/${renderId}`, {
